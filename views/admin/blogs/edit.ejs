@@ -1,0 +1,101 @@
+<%- include('../layout/main', {
+    title: blog ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới',
+    active: 'blogs',
+    body: `
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>${blog ? 'Chỉnh sửa bài viết' : 'Thêm bài viết mới'}</h5>
+            <a href="/admin/blogs" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <form action="/admin/blogs/${blog ? blog._id + '/update' : 'create'}" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Tiêu đề</label>
+                                <input type="text" class="form-control" id="title" name="title" value="${blog ? blog.title : ''}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="slug" class="form-label">Slug (URL)</label>
+                                <input type="text" class="form-control" id="slug" name="slug" value="${blog ? blog.slug : ''}" placeholder="ten-bai-viet">
+                                <small class="text-muted">Để trống sẽ tự động tạo từ tiêu đề</small>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="excerpt" class="form-label">Tóm tắt</label>
+                                <textarea class="form-control" id="excerpt" name="excerpt" rows="3">${blog ? blog.excerpt : ''}</textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="content" class="form-label">Nội dung</label>
+                                <textarea class="form-control editor" id="content" name="content" rows="15">${blog ? blog.content : ''}</textarea>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="thumbnail" class="form-label">Ảnh đại diện</label>
+                                <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+                                
+                                ${blog && blog.thumbnail ? `
+                                <div class="mt-2">
+                                    <img src="${blog.thumbnail}" class="img-thumbnail" style="max-height: 200px">
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="author" class="form-label">Tác giả</label>
+                                <input type="text" class="form-control" id="author" name="author" value="${blog ? blog.author : ''}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="draft" ${!blog || blog.status === 'draft' ? 'selected' : ''}>Bản nháp</option>
+                                    <option value="published" ${blog && blog.status === 'published' ? 'selected' : ''}>Đăng ngay</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="reset" class="btn btn-secondary me-md-2">Làm lại</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            ClassicEditor
+                .create(document.querySelector('.editor'))
+                .catch(error => {
+                    console.error(error);
+                });
+                
+            // Auto-generate slug from title
+            const titleInput = document.getElementById('title');
+            const slugInput = document.getElementById('slug');
+            
+            titleInput.addEventListener('keyup', function() {
+                if (!slugInput.value) {
+                    slugInput.value = titleInput.value
+                        .toLowerCase()
+                        .replace(/[^a-z0-9]+/g, '-')
+                        .replace(/-+/g, '-')
+                        .replace(/^-|-$/g, '');
+                }
+            });
+        });
+    </script>
+    `
+}) %> 

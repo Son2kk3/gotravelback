@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết người dùng | Admin Panel</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 250px;
+            background-color: #343a40;
+            padding-top: 20px;
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.75);
+            padding: 10px 20px;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+        .header {
+            background-color: #f8f9fa;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .btn-action {
+            margin-right: 5px;
+        }
+        .table img {
+            max-width: 100px;
+            max-height: 60px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="text-center mb-4">
+            <h4>Admin Dashboard</h4>
+        </div>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link" href="/admin">
+                    <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/tours">
+                    <i class="fas fa-plane me-2"></i> Tours
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/blogs">
+                    <i class="fas fa-blog me-2"></i> Blogs
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="/admin/users">
+                    <i class="fas fa-users me-2"></i> Users
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/admin/bookings">
+                    <i class="fas fa-calendar-check me-2"></i> Bookings
+                </a>
+            </li>
+            <li class="nav-item mt-5">
+                <a class="nav-link" href="/admin/logout">
+                    <i class="fas fa-sign-out-alt me-2"></i> Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header d-flex justify-content-between align-items-center">
+            <h4>Chi tiết người dùng</h4>
+            <div>
+                <span class="me-3">Admin</span>
+                <a href="/admin/profile" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-user-cog"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5>Thông tin chi tiết người dùng</h5>
+                <div>
+                    <a href="/admin/users/<%= user._id %>/edit" class="btn btn-primary me-2">
+                        <i class="fas fa-edit me-1"></i> Chỉnh sửa
+                    </a>
+                    <a href="/admin/users" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-1"></i> Quay lại
+                    </a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-4 mb-md-0">
+                            <img src="<%= user.avatar || '/img/avatar-placeholder.jpg' %>" alt="<%= user.fullname || user.email %>" class="rounded-circle mb-3" style="width: 150px; height: 150px; object-fit: cover;">
+                            <h4><%= user.fullname || user.email %></h4>
+                            <p class="badge <%= user.role === 'admin' ? 'bg-danger' : 'bg-success' %> mb-3">
+                                <%= user.role === 'admin' ? 'Quản trị viên' : 'Người dùng' %>
+                            </p>
+                            <p class="text-muted">
+                                <i class="fas fa-calendar me-1"></i> Tham gia: <%= new Date(user.createdAt).toLocaleDateString('vi-VN') %>
+                            </p>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="row mb-3">
+                                <div class="col-md-4 fw-bold">Email:</div>
+                                <div class="col-md-8"><%= user.email %></div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 fw-bold">Điện thoại:</div>
+                                <div class="col-md-8"><%= user.phone || 'Chưa cập nhật' %></div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 fw-bold">Địa chỉ:</div>
+                                <div class="col-md-8"><%= user.address || 'Chưa cập nhật' %></div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 fw-bold">Ngày cập nhật:</div>
+                                <div class="col-md-8"><%= new Date(user.updatedAt).toLocaleString('vi-VN') %></div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <h6>Lịch sử đặt tour</h6>
+                            <% if (typeof bookings !== 'undefined' && bookings && bookings.length > 0) { %>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Tour</th>
+                                            <th>Ngày đặt</th>
+                                            <th>Tổng tiền</th>
+                                            <th>Trạng thái</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% bookings.forEach((booking, index) => { %>
+                                        <tr>
+                                            <td><%= index + 1 %></td>
+                                            <td><%= booking.tour_id?.title || 'Tour không tồn tại' %></td>
+                                            <td><%= new Date(booking.createdAt).toLocaleDateString('vi-VN') %></td>
+                                            <td><%= booking.total_price.toLocaleString() %>đ</td>
+                                            <td>
+                                                <% if (booking.status === 'pending') { %>
+                                                    <span class="badge bg-warning">Chờ xác nhận</span>
+                                                <% } else if (booking.status === 'confirmed') { %>
+                                                    <span class="badge bg-info">Đã xác nhận</span>
+                                                <% } else if (booking.status === 'cancelled') { %>
+                                                    <span class="badge bg-danger">Đã hủy</span>
+                                                <% } else if (booking.status === 'completed') { %>
+                                                    <span class="badge bg-success">Hoàn thành</span>
+                                                <% } %>
+                                            </td>
+                                            <td>
+                                                <a href="/admin/bookings/<%= booking._id %>" class="btn btn-sm btn-outline-primary">Xem</a>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <% } else { %>
+                            <p class="text-muted">Người dùng chưa có đơn đặt tour nào.</p>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

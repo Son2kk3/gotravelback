@@ -1,0 +1,19 @@
+<%- include('../../partials/admin-header') %>
+
+<div class="container mt-4">
+  <h1>Upload Tour Image</h1>
+  <h3>Tour: <%= tour.title %></h3>
+
+  <% if (locals.error) { %>
+    <div class="alert alert-danger"><%= error %></div>
+  <% } %>
+
+  <form method="POST" action="/admin/tours/<%= tour._id %>/images/upload" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="image" class="form-label">Image</label>
+      <input type="file" class="form-control" id="image" name="image" required accept="image/jpeg,image/png,image/webp,image/jpg">
+      <div class="form-text">Max file size: 5MB. Supported formats: JPG, PNG, WebP.</div>
+    </div>
+    
+    <div class="mb-3">
+      <label for="alt_text" class="form-label

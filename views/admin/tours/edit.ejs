@@ -1,0 +1,131 @@
+<%- include('../layout/main', {
+    title: tour ? 'Chỉnh sửa Tour' : 'Thêm Tour mới',
+    active: 'tours',
+    body: `
+    <div class="mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5>${tour ? 'Chỉnh sửa Tour' : 'Thêm Tour mới'}</h5>
+            <a href="/admin/tours" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Quay lại
+            </a>
+        </div>
+        
+        <div class="card">
+            <div class="card-body">
+                <form action="/admin/tours/${tour ? tour._id + '/update' : 'create'}" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Tên Tour</label>
+                                <input type="text" class="form-control" id="title" name="title" value="${tour ? tour.title : ''}" required>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Mô tả</label>
+                                <textarea class="form-control" id="description" name="description" rows="4">${tour ? tour.description : ''}</textarea>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="price" class="form-label">Giá (VNĐ)</label>
+                                        <input type="number" class="form-control" id="price" name="price" value="${tour ? tour.price : ''}" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="original_price" class="form-label">Giá gốc (VNĐ) (nếu có)</label>
+                                        <input type="number" class="form-control" id="original_price" name="original_price" value="${tour ? tour.original_price : ''}">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="discount" class="form-label">Giảm giá (%)</label>
+                                        <input type="number" class="form-control" id="discount" name="discount" min="0" max="100" value="${tour ? tour.discount : '0'}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="duration" class="form-label">Thời gian Tour</label>
+                                        <input type="text" class="form-control" id="duration" name="duration" value="${tour ? tour.duration : ''}" placeholder="VD: 3 ngày 2 đêm" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="region" class="form-label">Khu vực</label>
+                                        <select class="form-select" id="region" name="region" required>
+                                            <option value="">Chọn khu vực</option>
+                                            <option value="north" ${tour && tour.region === 'north' ? 'selected' : ''}>Miền Bắc</option>
+                                            <option value="central" ${tour && tour.region === 'central' ? 'selected' : ''}>Miền Trung</option>
+                                            <option value="south" ${tour && tour.region === 'south' ? 'selected' : ''}>Miền Nam</option>
+                                            <option value="international" ${tour && tour.region === 'international' ? 'selected' : ''}>Quốc tế</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="country" class="form-label">Quốc gia</label>
+                                        <input type="text" class="form-control" id="country" name="country" value="${tour ? tour.country : 'Việt Nam'}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="vehicle" class="form-label">Phương tiện</label>
+                                        <input type="text" class="form-control" id="vehicle" name="vehicle" value="${tour ? tour.vehicle : ''}" placeholder="VD: Ô tô, máy bay">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="schedule" class="form-label">Lịch khởi hành</label>
+                                        <input type="text" class="form-control" id="schedule" name="schedule" value="${tour ? tour.schedule : ''}" placeholder="VD: Thứ 6 hàng tuần">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="thumbnail" class="form-label">Ảnh đại diện</label>
+                                <input type="file" class="form-control" id="thumbnail" name="thumbnail" accept="image/*">
+                                
+                                ${tour && tour.thumbnail ? `
+                                <div class="mt-2">
+                                    <img src="${tour.thumbnail}" class="img-thumbnail" style="max-height: 200px">
+                                </div>
+                                ` : ''}
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Trạng thái</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="active" ${!tour || tour.status === 'active' ? 'selected' : ''}>Hoạt động</option>
+                                    <option value="inactive" ${tour && tour.status === 'inactive' ? 'selected' : ''}>Không hoạt động</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="featured" name="featured" ${tour && tour.featured ? 'checked' : ''}>
+                                <label class="form-check-label" for="featured">Hiển thị nổi bật</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="reset" class="btn btn-secondary me-md-2">Làm lại</button>
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    `
+}) %> 
