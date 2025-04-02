@@ -89,14 +89,14 @@ app.use((err, req, res, next) => {
 
 
 app.post('/api/send-email', async (req, res) => {
-  const { email } = req.body;
+  const { email, text } = req.body;
 
   try {
     await transporter.sendMail({
-      from: '"My App" <son17042003@gmail.com>',
+      from: '"GoTravel" <son17042003@gmail.com>',
       to: email,
-      subject: 'Xin chào!',
-      text: 'Cảm ơn bạn đã tin dùng dịch vụ của chúng tôi. Ấn vào đường dẫn này để đặt lại mật khẩu: https://gotravelfront.onrender.com/reset-password',
+      subject: 'GoTravel xin chào!',
+      text: text,
     });
 
     res.json({ success: true, message: 'Email đã được gửi!' });
