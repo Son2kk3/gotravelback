@@ -8,6 +8,6 @@ router.post("/google", authController.googleSignIn);
 router.post("/signup", authController.signup);
 router.get("/profile", authController.profile);
 router.post("/logout", authController.logout);
-router.put("/change-password/:username", authController.changePassword);
+router.put("/change-password/:email", authController.changePassword);
 
 module.exports = router;

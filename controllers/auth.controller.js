@@ -224,20 +224,20 @@ module.exports = {
 
   changePassword: async (req, res) => {
     const response = {};
-    const { username } = req.params;
+    const { email } = req.params;
     const { password } = req.body;
-    const user = await User.findOne({ username: username });
+    const user = await User.findOne({ email: email });
     if (!user) {
       return res.status(404).json({
         status: 404,
-        message: "Username not exist!",
+        message: "email not exist!",
       });
     }
     try {
       const salt = bcrypt.genSaltSync(saltRounds);
       const hash = bcrypt.hashSync(password, salt);
       const user = await User.updateOne(
-        { username: username },
+        { email: email },
         { password: hash },
       );
       Object.assign(response, {

@@ -1,5 +1,6 @@
 const cors = require("cors");
 var session = require("express-session");
+const nodemailer = require('nodemailer');
 const express = require("express");
 const userRouter = require("./router/user");
 const authRouter = require("./router/auth");
@@ -15,6 +16,13 @@ require("dotenv").config();
 const multer = require("multer");
 const bodyParser = require("body-parser");
 const flash = require('connect-flash');
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER, // 👉 thay bằng email thật
+    pass: process.env.EMAIL_PASS,    // 👉 mật khẩu ứng dụng (App Password, không phải mật khẩu Gmail thường)
+  },
+});
 
 const app = express();
 app.set("view engine", "ejs");
@@ -77,6 +85,27 @@ app.use((err, req, res, next) => {
     <a href="javascript:history.back()">Quay lại</a>
   `);
 });
+
+
+
+app.post('/api/send-email', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    await transporter.sendMail({
+      from: '"My App" <son17042003@gmail.com>',
+      to: email,
+      subject: 'Xin chào!',
+      text: 'Cảm ơn bạn đã tin dùng dịch vụ của chúng tôi. Ấn vào đường dẫn này để đặt lại mật khẩu: https://gotravelfront.onrender.com/reset-password',
+    });
+
+    res.json({ success: true, message: 'Email đã được gửi!' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Gửi email thất bại.' });
+  }
+});
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () =>
